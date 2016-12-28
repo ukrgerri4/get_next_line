@@ -6,46 +6,105 @@
 /*   By: ikryvenk <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/26 20:42:47 by ikryvenk          #+#    #+#             */
-/*   Updated: 2016/12/27 19:13:49 by ikryvenk         ###   ########.fr       */
+/*   Updated: 2016/12/28 17:03:40 by ikryvenk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int get_next_line(const int fd, char **line)
+t_buf	*add_struct(t_buf **fd_buf, int fd)
 {
-	static char	buf[BUF_SIZE + 1];
-	char		*tmp;
-	int			i;
+	t_buf	*tmp;
 
-	write(1, "1\n", 2);
-	line = (char**)malloc(sizeof(*line) * 2);
-	*line = (char*)malloc(sizeof(**line) * BUF_SIZE + 1);
-	tmp = *line;
-	write(1, "2\n", 2);
-	if (read(fd, buf, BUF_SIZE) != 0)
+	if (fd_buf)
 	{
-		write(1, "3\n", 2);
-		i = 0;
-		while (i < BUF_SIZE && buf[i] != '\n')
-			*(tmp++) = buf[i++];
-		*tmp = '\0';
-		printf("%s", *line);
+		tmp = (t_buf*)malloc(sizeof(t_buf));
+		tmp->fd = fd;
+		tmp->buf = (char*)malloc(sizeof(char) * BUF_SIZE + 1);
+		tmp->next = *fd_buf;
+		*fd_buf = tmp;
 	}
 	else
-		return (-1);
+	{
+		tmp = (t_buf*)malloc(sizeof(t_buf));
+		tmp->fd = fd;
+		tmp->buf = (char*)malloc(sizeof(char) * BUF_SIZE + 1);
+		tmp->next = NULL;
+		*fd_buf = tmp;
+	}
+	return (*fd_buf);
+}
+
+void	save_buf(t_buf **fd_buf, char *buf, int i, int fd)
+{
+	t_buf	*tmp;
+	int		j;
+
+	j = 0;
+	tmp = *fd_buf;
+	if (tmp)
+	{
+		while (tmp->fd != fd && tmp->next)
+			tmp = tmp->next;
+		if (tmp->fd != fd)
+			tmp = add_struct(fd_buf, fd);
+		while (i < BUF_SIZE && buf[i])
+			tmp->buf[j++] = buf[i++];
+	}
+	else
+	{
+		tmp = add_struct(fd_buf, fd);
+		while (i < BUF_SIZE && buf[i])
+			tmp->buf[j++] = buf[i++];
+	}
+	tmp->buf[j] = '\0';
+}
+
+int		get_next_line(const int fd, char **line)
+{
+	static t_buf	*fd_buf;
+	static char		buf[BUF_SIZE + 1];
+	char			*tmp;
+	int				i;
+
+	tmp = (char*)malloc(sizeof(*tmp) * BUF_SIZE + 1);
+	*line = tmp;
+	while (read(fd, buf, BUF_SIZE) != 0)
+	{
+		i = 0;
+		while (buf[i] != '\n' && buf[i] != '\0')
+			*(tmp++) = buf[i++];
+		if (buf[i] == '\n')
+		{
+			save_buf(&fd_buf, buf, ++i, fd);
+			return (1);
+		}
+	}
+	*tmp = '\0';
 	return (0);
 }
 
-int main(int argc, char **argv)
+int		main(int argc, char **argv)
 {
-	char **line;
+	char	*line;
 	int		fd;
+	int		fd1;
 
-	fd = 0;
-	line = 0;
-	if (argc == 2)
-		fd = open(argv[1], O_RDONLY);
-	get_next_line(fd, line);
+	fd = open(argv[1], O_RDONLY);
+	printf("FD = %d\n", fd);
+	get_next_line(fd, &line);
+	printf("LINE = %s\n", line);
+
+/*	fd1 = open(argv[2], O_RDONLY);
+	printf("%d\n", fd1);
+	get_next_line(fd1, &line);
+	printf("%s\n", line);*/
+
+	get_next_line(fd, &line);
+	printf("%s\n", line);
+/*
+	get_next_line(fd1, &line);
+	printf("%s\n", line);
+*/
 	return (0);
 }

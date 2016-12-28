@@ -6,7 +6,7 @@
 /*   By: ikryvenk <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/26 20:42:54 by ikryvenk          #+#    #+#             */
-/*   Updated: 2016/12/27 19:13:51 by ikryvenk         ###   ########.fr       */
+/*   Updated: 2016/12/28 16:46:46 by ikryvenk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,13 @@
 # include <sys/types.h>
 # include <sys/stat.h>
 
-# define BUF_SIZE 15
+# define BUF_SIZE 30
+
+typedef struct		s_buf
+{
+	char			*buf;
+	int				fd;
+	struct s_buf	*next;
+}					t_buf;
 
 #endif

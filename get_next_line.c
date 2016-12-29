@@ -6,12 +6,26 @@
 /*   By: ikryvenk <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/26 20:42:47 by ikryvenk          #+#    #+#             */
-/*   Updated: 2016/12/28 17:03:40 by ikryvenk         ###   ########.fr       */
+/*   Updated: 2016/12/29 13:33:44 by ikryvenk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
+#include "libft/libft.h"
+/*
+t_buf	write_rest(t_buf *fd_buf, char *tmpi, int fd)
+{
+	if (fd_buf)
+	{
+		while (tmp->fd != fd && tmp->next)
+			tmp = tmp->next;
+		if (tmp->fd != fd)
+			return (tmp);
+		tmp = strcpy(fd_buf->buf, fd);
+	}
+}
+*/
 t_buf	*add_struct(t_buf **fd_buf, int fd)
 {
 	t_buf	*tmp;
@@ -60,27 +74,45 @@ void	save_buf(t_buf **fd_buf, char *buf, int i, int fd)
 	tmp->buf[j] = '\0';
 }
 
+char	*str_malloc(char *line, int len, int j)
+{
+	char *str;
+
+	str = (char*)malloc((sizeof(char) * len));
+	str = ft_strncpy(str, line, j);
+	free(tmp);
+	return (str);
+}
+
+
 int		get_next_line(const int fd, char **line)
 {
-	static t_buf	*fd_buf;
-	static char		buf[BUF_SIZE + 1];
-	char			*tmp;
+	static t_buf	*fd_buf;	
+	char			buf[BUF_SIZE + 1];
+	char			j;
 	int				i;
+	int				len;
 
-	tmp = (char*)malloc(sizeof(*tmp) * BUF_SIZE + 1);
-	*line = tmp;
-	while (read(fd, buf, BUF_SIZE) != 0)
+	len = 30;
+	if (!(*line = (char*)malloc(sizeof(char) * len)) || fd < 0)
+		return (-1);
+	j = 0;/*need to check if "fd" used before, and return count of characters which I can write*/
+	while (read(fd, buf, BUF_SIZE))
 	{
 		i = 0;
 		while (buf[i] != '\n' && buf[i] != '\0')
-			*(tmp++) = buf[i++];
+		{
+			if (j == len - 1)
+				*line = tmp_realloc(*line, len *= 2, j);
+			(*line)[j++] = buf[i++];
+		}
+		(*line)[j] = '\0';
 		if (buf[i] == '\n')
 		{
-			save_buf(&fd_buf, buf, ++i, fd);
+//			save_buf(&fd_buf, buf, ++i, fd);
 			return (1);
 		}
 	}
-	*tmp = '\0';
 	return (0);
 }
 

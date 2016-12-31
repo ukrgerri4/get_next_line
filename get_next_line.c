@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ikryvenk <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/12/26 20:42:47 by ikryvenk          #+#    #+#             */
-/*   Updated: 2016/12/29 19:18:04 by ikryvenk         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "get_next_line.h"
 
 #include "libft/libft.h"
@@ -108,7 +96,7 @@ int		get_next_line(const int fd, char **line)
 {
 	static t_buf	*fd_buf;	
 	char			buf[BUF_SIZE];
-	char			j;
+	int				j;
 	int				i;
 	int				len;
 	int				rd;
@@ -152,17 +140,20 @@ int		main(int argc, char **argv)
 	int		fd;
 	int		fd1;
 
+	if (argc == 0)
+		return 0;
+	
 	printf("---------------------------------\n");
 
 	fd = open(argv[1], O_RDONLY);	
-//	printf("FD = %d\n", fd);
+	printf("FD = %d\n", fd);
 	get_next_line(fd, &line);
 	printf("LINE = %s\n", line);
 
 	printf("---------------------------------\n");
 
 	fd1 = open(argv[2], O_RDONLY);
-//	printf("%d\n", fd1);
+	printf("%d\n", fd1);
 	get_next_line(fd1, &line);
 	printf("LINE - 2 = %s\n", line);
 

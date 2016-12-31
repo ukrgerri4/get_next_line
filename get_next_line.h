@@ -21,7 +21,7 @@
 # include <sys/types.h>
 # include <sys/stat.h>
 
-# define BUF_SIZE 20
+# define BUF_SIZE 1
 
 typedef struct		s_buf
 {

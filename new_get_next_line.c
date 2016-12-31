@@ -18,13 +18,12 @@ static int		write_rest(t_buf *s_fdlist, char **line, int fd)
 			i++;
 		if (!(*line = (char*)malloc(sizeof(char) * i)))
 			exit (-1);
-		i = 0;
-		while (s_fdlist->buf[i] && s_fdlist->buf[i] != '\n')
-			(*line)[j++] = s_fdlist->buf[i++];
+		while (*(s_fdlist->buf) && *(s_fdlist->buf) != '\n')
+			(*line)[j++] = *(s_fdlist->buf++);
 		(*line)[j] = '\0';
-		if (s_fdlist->buf[i] == '\n')
+		if (*(s_fdlist->buf) == '\n')
 		{
-			s_fdlist->buf = &s_fdlist->buf[i + 1];
+			s_fdlist->buf++;
 			return (1);
 		}
 		return (0);

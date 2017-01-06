@@ -6,7 +6,7 @@
 /*   By: ikryvenk <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/26 20:42:54 by ikryvenk          #+#    #+#             */
-/*   Updated: 2016/12/29 15:59:16 by ikryvenk         ###   ########.fr       */
+/*   Updated: 2016/12/29 20:25:03 by ikryvenk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,7 @@ typedef struct		s_buf
 	int				fd;
 	struct s_buf	*next;
 }					t_buf;
+
+int		get_next_line(const int fd, char **line);
 
 #endif

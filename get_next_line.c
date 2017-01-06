@@ -1,3 +1,18 @@
+<<<<<<< HEAD
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ikryvenk <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2016/12/26 20:42:47 by ikryvenk          #+#    #+#             */
+/*   Updated: 2016/12/29 20:46:56 by ikryvenk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+=======
+>>>>>>> 550f4ffdf03ccc5148dc0bcbcb7528604c955a36
 #include "get_next_line.h"
 
 #include "libft/libft.h"
@@ -20,6 +35,7 @@ int		write_rest(t_buf *fd_buf, char *tmp, int fd)
 		if (fd_buf->buf[i] == '\n')
 		{
 			tmp[j] = '\0';
+			fd_buf->buf = &(fd_buf->buf[i + 1]);
 			return (j = -1);
 		}
 		tmp[j] = '\0';
@@ -94,7 +110,7 @@ char	*tmp_realloc(char *line, int len, int j)
 
 int		get_next_line(const int fd, char **line)
 {
-	static t_buf	*fd_buf;	
+	static t_buf	*fd_buf;
 	char			buf[BUF_SIZE];
 	int				j;
 	int				i;
@@ -105,7 +121,7 @@ int		get_next_line(const int fd, char **line)
 	if (!(*line = (char*)malloc(sizeof(char) * len + 1)) || fd < 0)
 		return (-1);
 	j = write_rest(fd_buf, *line, fd);
-	printf("LINE_START = %s, `j = %d\n", *line, j);
+//	printf("LINE_START = %s, `j = %d\n", *line, j);
 	if (j != -1)
 	{
 		while ((rd = read(fd, buf, BUF_SIZE)))
@@ -122,9 +138,9 @@ int		get_next_line(const int fd, char **line)
 			(*line)[j] = '\0';
 			if (buf[i] == '\n')
 			{
-				printf("rd = %d, i = %d\n", rd, i);
+//				printf("rd = %d, i = %d\n", rd, i);
 				save_buf(&fd_buf, &buf[i + 1], (rd - i - 1), fd);
-				printf("fd_buf after rite = %s, fd_buf->fd = %d\n", fd_buf->buf, fd_buf->fd);
+//				printf("fd_buf after rite = %s, fd_buf->fd = %d\n", fd_buf->buf, fd_buf->fd);
 				return (1);
 			}
 		}
@@ -133,7 +149,7 @@ int		get_next_line(const int fd, char **line)
 		return (1);
 	return (0);
 }
-
+/*
 int		main(int argc, char **argv)
 {
 	char	*line;
@@ -145,6 +161,8 @@ int		main(int argc, char **argv)
 	
 	printf("---------------------------------\n");
 
+	if (argc == 0)
+		return (0);
 	fd = open(argv[1], O_RDONLY);	
 	printf("FD = %d\n", fd);
 	get_next_line(fd, &line);
@@ -175,3 +193,4 @@ int		main(int argc, char **argv)
 	printf("---------------------------------\n");
 	return (0);
 }
+*/

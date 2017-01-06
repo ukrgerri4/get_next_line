@@ -6,14 +6,12 @@
 /*   By: ikryvenk <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/26 20:42:54 by ikryvenk          #+#    #+#             */
-/*   Updated: 2017/01/06 16:07:42 by ikryvenk         ###   ########.fr       */
+/*   Updated: 2017/01/06 20:02:12 by ikryvenk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-
-# include <stdio.h> //delete
 
 # include <stdlib.h>
 # include <unistd.h>
@@ -21,7 +19,7 @@
 # include <sys/types.h>
 # include <sys/stat.h>
 
-# define BUF_SIZE 1
+# define BUF_SIZE 30
 
 typedef struct		s_buf
 {
@@ -30,5 +28,5 @@ typedef struct		s_buf
 	struct s_buf	*next;
 }					t_buf;
 
-int		get_next_line(const int fd, char **line);
+int					get_next_line(const int fd, char **line);
 #endif

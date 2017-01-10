@@ -1,84 +1,100 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ikryvenk <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/01/04 21:00:23 by ikryvenk          #+#    #+#             */
-/*   Updated: 2017/01/06 20:03:19 by ikryvenk         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "get_next_line.h"
-#include "libft/libft.h"
 
-static int			write_rest(t_buf *s_fdlist, char **line, int fd)
+static int          write_rest(char *str, char **line, size_t n)
 {
-	int j;
-	int i;
+    char    *tmp;
+    int     i;
 
-	j = 0;
-	i = 0;
-	if (s_fdlist)
-	{
-		while (s_fdlist->fd != fd && s_fdlist->next)
-			s_fdlist = s_fdlist->next;
-		if (s_fdlist->fd != fd)
-			return (-1);
-		if (*(s_fdlist->buf) == '\n')
-			s_fdlist->buf++;
-		while (s_fdlist->buf[i] && s_fdlist->buf[i] != '\n')
-			i++;
-		*line = ft_strnew(i);
-		while (*(s_fdlist->buf) && *(s_fdlist->buf) != '\n')
-			(*line)[j++] = *(s_fdlist->buf++);
-		(*line)[j] = '\0';
-		if (!(**line) && !*(s_fdlist->buf))
-			return (0);
-		return (1);
-	}
-	return (-1);
+    tmp = str;
+    i = 0;
+    if (ft_memchr(tmp, '\n', n))
+    {
+        tmp = str;
+        while (*tmp++ != '\n')
+            i++;
+        if (*line)
+        {
+            tmp = ft_strnew(ft_strlen(*line) + i);
+            tmp = ft_strcpy(tmp, *line);
+            tmp = ft_strncat(tmp, str, i);
+            *line = tmp;
+        }
+        else
+            *line = ft_strsub(str, 0, i);
+        str = ft_memmove(str, &str[i + 1], n - i);
+        str[n - i] = '\0';
+        return (1);
+    } 
+    if (*line)
+        *line = ft_strjoin(*line, str);
+    else
+        *line = ft_strdup(str);
+    ft_bzero(str, n);
+    return (0);
 }
 
-static t_buf		*add_list(t_buf **s_fdlist, int fd)
+static int			check_rest(t_buf *s_fdlist, char **line, int fd)
+{
+    if (*line)
+        *line = 0;
+    if (s_fdlist)
+    {
+        while (s_fdlist->fd != fd && s_fdlist->next)
+            s_fdlist = s_fdlist->next;
+        if (s_fdlist->fd == fd && s_fdlist->buf)
+            if (write_rest(s_fdlist->buf, line, ft_strlen(s_fdlist->buf)))
+                return (1);
+     }   
+    return (0);
+}
+
+static void		check_list(t_buf **s_fdlist, char *buf, int fd)
 {
 	t_buf	*tmp;
 
+    tmp = *s_fdlist;
+    if (tmp)
+    {
+        while (tmp->fd != fd && tmp->next)
+            tmp = tmp->next;
+        if (tmp->fd == fd)
+        {
+            tmp->buf = ft_strdup(buf);
+            return ;
+        }       
+    }
 	tmp = (t_buf*)malloc(sizeof(t_buf));
 	tmp->fd = fd;
-	tmp->buf = ft_strnew(BUF_SIZE);
+	tmp->buf = ft_strdup(buf);
 	if (*s_fdlist)
 		tmp->next = *s_fdlist;
 	else
 		tmp->next = NULL;
 	*s_fdlist = tmp;
-	return (*s_fdlist);
 }
 
 int					get_next_line(const int fd, char **line)
 {
 	static t_buf	*s_fdlist;
 	char			buf[BUF_SIZE + 1];
-	char			*tmp;
 	int				rbyte;
-	int				ret_value;
 
 	if (fd < 0)
 		return (-1);
-	if ((ret_value = write_rest(s_fdlist, line, fd)) != -1)
-		return (ret_value);
-	s_fdlist = add_list(&s_fdlist, fd);
-	while ((rbyte = read(fd, buf, BUF_SIZE)) > 0)
-	{
-		buf[rbyte] = '\0';
-		tmp = s_fdlist->buf;
-		s_fdlist->buf = ft_strjoin(s_fdlist->buf, buf);
-		free(tmp);
-	}
-	if (rbyte == -1)
-		return (-1);
-	if ((ret_value = write_rest(s_fdlist, line, fd)) != -1)
-		return (ret_value);
-	return (0);
+    if (check_rest(s_fdlist, line, fd))
+        return (1);
+    while ((rbyte = read(fd, buf, BUF_SIZE)) > 0)
+    {
+        buf[rbyte] = '\0';
+        if (write_rest(buf, line, rbyte) == 1)
+        {
+            check_list(&s_fdlist, buf, fd);
+            return (1);
+        }
+    }
+    if (rbyte == -1)
+        return (-1);
+    if (rbyte == 0)
+        return (0);
+	return (1);
 }

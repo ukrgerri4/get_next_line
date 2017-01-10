@@ -13,13 +13,17 @@
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
+# include <stdio.h>
+
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
 # include <sys/types.h>
 # include <sys/stat.h>
+# include "libft/libft.h"
 
-# define BUF_SIZE 30
+
+# define BUF_SIZE 32
 
 typedef struct		s_buf
 {

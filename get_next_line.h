@@ -6,14 +6,12 @@
 /*   By: ikryvenk <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/26 20:42:54 by ikryvenk          #+#    #+#             */
-/*   Updated: 2017/01/06 20:02:12 by ikryvenk         ###   ########.fr       */
+/*   Updated: 2017/01/12 01:20:52 by ikryvenk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-
-# include <stdio.h>
 
 # include <stdlib.h>
 # include <unistd.h>
@@ -22,8 +20,7 @@
 # include <sys/stat.h>
 # include "libft/libft.h"
 
-
-# define BUF_SIZE 32
+# define BUFF_SIZE 9999
 
 typedef struct		s_buf
 {
